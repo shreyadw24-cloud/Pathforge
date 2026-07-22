@@ -1,11 +1,8 @@
+# Pathforge
 
-  # Career Advisor Web App
+AI-powered career advisor web app. Discover personalized career paths, build skills, and navigate your professional journey.
 
-  This is a code bundle for Career Advisor Web App. The original project is available at https://www.figma.com/design/fDm1JnWp2inDtrPJNoNzpa/Career-Advisor-Web-App.
+## Running the code
 
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
-  
+Run `npm i` to install dependencies.
+Run `npm run dev` to start the development server.
