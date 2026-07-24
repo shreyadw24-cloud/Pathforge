@@ -2156,7 +2156,14 @@ export default function App() {
 
   const nav = (s: Screen) => setScreen(s);
 
-  const handleLoadingDone = useCallback(() => {
+  const handleLoadingDone = useCallback(async () => {
+    try {
+      const result = await apiPost("/career/advise", {}, localStorage.getItem("token") || undefined);
+      setCareerData(result.suggestions);
+    } catch (err) {
+      console.warn("AI advise failed, showing demo data:", err);
+      setCareerData(CAREER_RESULTS); // fallback so app never breaks in demo
+    }
     setScreen("results");
   }, []);
 
