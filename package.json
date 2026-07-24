@@ -1,0 +1,21 @@
+{
+  "name": "careeradvisor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shreyadw24-cloud/CareerAdvisor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/shreyadw24-cloud/CareerAdvisor/issues"
+  },
+  "homepage": "https://github.com/shreyadw24-cloud/CareerAdvisor#readme"
+}
