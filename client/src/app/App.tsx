@@ -839,6 +839,23 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
   );
 
   const canSubmit = strength >= 60;
+
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const handleGetPaths = async () => {
+    setSaving(true);
+    setSaveError("");
+    try {
+      await apiPost("/career/profile", { skills, interests, background: academic }, localStorage.getItem("token") || undefined);
+      onSubmit();
+    } catch (err: any) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const strengthColor = strength < 40 ? C.amber : strength < 80 ? C.indigo : C.teal;
   const strengthLabel = strength < 40 ? "Getting started" : strength < 80 ? "Almost there" : "Profile complete";
 
@@ -1067,8 +1084,8 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
               transition={{ delay: 0.32, duration: 0.4 }}
             >
               <button
-                onClick={canSubmit ? onSubmit : undefined}
-                disabled={!canSubmit}
+                onClick={canSubmit ? handleGetPaths : undefined}
+                disabled={!canSubmit || saving}
                 className="w-full py-4 rounded-2xl text-base font-black flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
                 style={{
                   backgroundColor: canSubmit ? C.indigo : C.gray200,
@@ -1077,12 +1094,17 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
                   boxShadow: canSubmit ? `0 8px 24px ${C.indigo}33` : "none",
                 }}
               >
-                Get My Career Paths
+                {saving ? "Saving..." : "Get My Career Paths"}
                 <ArrowRight size={18} />
               </button>
               {!canSubmit && (
                 <p className="text-center text-xs mt-2" style={{ color: C.gray400 }}>
                   {60 - strength}% more needed to unlock
+                </p>
+              )}
+              {saveError && (
+                <p className="text-center text-sm mt-2" style={{ color: "#DC2626" }}>
+                  {saveError}
                 </p>
               )}
             </motion.div>
