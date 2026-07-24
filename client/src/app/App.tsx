@@ -9,6 +9,7 @@ import {
   Zap, Clock, GitCompare, ChevronLeft, BookOpen, ExternalLink,
   Building2, MapPin,
 } from "lucide-react";
+import { apiPost } from "../api";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Screen = "login" | "profile" | "loading" | "results" | "history" | "explore" | "learning-plan";
@@ -544,11 +545,21 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => { setLoading(false); onLogin(); }, 900);
+    setError("");
+    try {
+      const data = await apiPost("/auth/login", { email, password });
+      localStorage.setItem("token", data.token);
+      onLogin();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formItems = [
@@ -718,6 +729,8 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                 />
               </motion.div>
             ))}
+            
+            {error && <p className="text-sm text-red-500 -mt-1">{error}</p>}
 
             {/* Forgot password + submit stagger after fields */}
             <motion.div
