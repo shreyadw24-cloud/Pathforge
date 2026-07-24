@@ -1970,12 +1970,14 @@ function ExplorePathScreen({
 
 function LearningPlanScreen({
   careerId,
+  careerData,
   onBack,
 }: {
   careerId: number;
+  careerData: typeof CAREER_RESULTS;
   onBack: () => void;
 }) {
-  const career = CAREER_RESULTS.find((c) => c.id === careerId)!;
+  const career = careerData.find((c) => c.id === careerId)!;
   const modules = LEARNING_MODULES[careerId];
   const [completed, setCompleted] = useState<Set<number>>(new Set());
 
@@ -2232,6 +2234,7 @@ export default function App() {
           {screen === "learning-plan" && (
             <LearningPlanScreen
               careerId={selectedCareer}
+              careerData={careerData}
               onBack={() => nav("results")}
             />
           )}
