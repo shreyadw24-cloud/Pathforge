@@ -544,15 +544,24 @@ function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void 
 function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSignup, setIsSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    if (isSignup && password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setLoading(true);
     try {
-      const data = await apiPost("/auth/login", { email, password });
+      const data = isSignup
+        ? await apiPost("/auth/register", { name, email, password })
+        : await apiPost("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
       onLogin();
     } catch (err: any) {
@@ -563,8 +572,10 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   };
 
   const formItems = [
+    ...(isSignup ? [{ label: "Name", type: "text", value: name, set: setName, placeholder: "Aryan Sharma" }] : []),
     { label: "Email", type: "email", value: email, set: setEmail, placeholder: "aryan@example.com" },
     { label: "Password", type: "password", value: password, set: setPassword, placeholder: "••••••••" },
+    ...(isSignup ? [{ label: "Confirm Password", type: "password", value: confirmPassword, set: setConfirmPassword, placeholder: "••••••••" }] : []),
   ];
 
   return (
@@ -720,6 +731,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                   value={val}
                   onChange={(e) => set(e.target.value)}
                   placeholder={placeholder}
+                  required
                   className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
                   style={{
                     border: `1px solid ${C.gray200}`,
@@ -733,16 +745,18 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
             {error && <p className="text-sm text-red-500 -mt-1">{error}</p>}
 
             {/* Forgot password + submit stagger after fields */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.24, duration: 0.35 }}
-              className="flex justify-end"
-            >
-              <button type="button" className="text-xs font-semibold" style={{ color: C.indigo }}>
-                Forgot password?
-              </button>
-            </motion.div>
+            {!isSignup && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.24, duration: 0.35 }}
+                className="flex justify-end"
+              >
+                <button type="button" onClick={() => alert("Password reset coming soon")} className="text-xs font-semibold" style={{ color: C.indigo }}>
+                  Forgot password?
+                </button>
+              </motion.div>
+            )}
 
             {/* Submit button appears last in the stagger */}
             <motion.div
@@ -759,7 +773,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                 {loading ? (
                   <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                 ) : (
-                  <>Sign in <ArrowRight size={15} /></>
+                  <>{isSignup ? "Create account" : "Sign in"} <ArrowRight size={15} /></>
                 )}
               </button>
             </motion.div>
@@ -772,9 +786,13 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
             transition={{ delay: 0.4, duration: 0.4 }}
           >
             <p className="mt-6 text-center text-sm" style={{ color: C.gray500 }}>
-              New here?{" "}
-              <button className="font-semibold" style={{ color: C.indigo }} onClick={onLogin}>
-                Create an account
+              {isSignup ? "Already have an account?" : "New here?"}{" "}
+              <button
+                className="font-semibold"
+                style={{ color: C.indigo }}
+                onClick={() => { setIsSignup(!isSignup); setError(""); }}
+              >
+                {isSignup ? "Sign in" : "Create an account"}
               </button>
             </p>
 
@@ -784,6 +802,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                 {["Google", "LinkedIn"].map((p) => (
                   <button
                     key={p}
+                    onClick={() => alert(`${p} sign-in coming soon`)}
                     className="py-2.5 text-sm font-medium rounded-2xl border transition-colors hover:bg-gray-50"
                     style={{ borderColor: C.gray200, color: C.gray700 }}
                   >
