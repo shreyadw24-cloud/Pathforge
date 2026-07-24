@@ -2129,7 +2129,7 @@ function LearningPlanScreen({
                             className="flex items-center gap-2 text-xs"
                             style={{ color: C.gray500 }}
                           >
-                            <ExternalLink size={11} style={{ color: C.gray400, shrink: 0 }} />
+                            <ExternalLink size={11} style={{ color: C.gray400, flexShrink: 0 }} />
                             <span className="truncate">{res}</span>
                           </div>
                         ))}
