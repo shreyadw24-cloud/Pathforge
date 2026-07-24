@@ -1317,10 +1317,12 @@ function LoadingScreen({ onDone }: { onDone: () => void }) {
 // ── Results ───────────────────────────────────────────────────────────────────
 
 function ResultsScreen({
+  careerData,
   onSaveAndCompare,
   onExplore,
   onLearnPlan,
 }: {
+  careerData: typeof CAREER_RESULTS;
   onSaveAndCompare: () => void;
   onExplore: (id: number) => void;
   onLearnPlan: (id: number) => void;
@@ -1354,7 +1356,7 @@ function ResultsScreen({
         </div>
 
         <div className="space-y-5 mb-8">
-          {CAREER_RESULTS.map((career, i) => (
+          {careerData.map((career, i) => (
             // Staggered fade+slide for each result card — delay scales with position
             <motion.div
               key={career.id}
@@ -1741,14 +1743,16 @@ function HistoryScreen({ hasHistory }: { hasHistory: boolean }) {
 
 function ExplorePathScreen({
   careerId,
+  careerData,
   onBack,
   onLearnPlan,
 }: {
   careerId: number;
+  careerData: typeof CAREER_RESULTS;
   onBack: () => void;
   onLearnPlan: (id: number) => void;
 }) {
-  const career = CAREER_RESULTS.find((c) => c.id === careerId)!;
+  const career = careerData.find((c) => c.id === careerId)!;
   const extras = CAREER_EXTRAS[careerId];
 
   return (
@@ -2148,6 +2152,7 @@ export default function App() {
   );
   const [hasHistory, setHasHistory] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
+  const [careerData, setCareerData] = useState(CAREER_RESULTS);
 
   const nav = (s: Screen) => setScreen(s);
 
@@ -2199,6 +2204,7 @@ export default function App() {
           )}
           {screen === "results" && (
             <ResultsScreen
+              careerData={careerData}
               onSaveAndCompare={handleSaveAndCompare}
               onExplore={handleExplore}
               onLearnPlan={handleLearnPlan}
@@ -2210,6 +2216,7 @@ export default function App() {
           {screen === "explore" && (
             <ExplorePathScreen
               careerId={selectedCareer}
+              careerData={careerData}
               onBack={() => nav("results")}
               onLearnPlan={handleLearnPlan}
             />
