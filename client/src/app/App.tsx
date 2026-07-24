@@ -526,7 +526,7 @@ function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void 
               <button
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-red-50 transition-colors text-left"
                 style={{ color: "#DC2626" }}
-                onClick={() => { setDropdown(false); onNav("login"); }}
+                onClick={() => { localStorage.removeItem("token"); setDropdown(false); onNav("login"); }}
               >
                 <LogOut size={14} />
                 Sign out
@@ -2121,7 +2121,9 @@ function LearningPlanScreen({
 // ── App ───────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("login");
+  const [screen, setScreen] = useState<Screen>(
+    localStorage.getItem("token") ? "profile" : "login"
+  );
   const [hasHistory, setHasHistory] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
 
