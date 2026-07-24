@@ -1465,7 +1465,7 @@ function ResultsScreen({
 
 // ── History ───────────────────────────────────────────────────────────────────
 
-function HistoryScreen({ hasHistory }: { hasHistory: boolean }) {
+function HistoryScreen({ hasHistory, historyData }: { hasHistory: boolean; historyData: typeof HISTORY_SNAPSHOTS }) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleSnap = (id: string) => {
@@ -1476,8 +1476,8 @@ function HistoryScreen({ hasHistory }: { hasHistory: boolean }) {
     });
   };
 
-  const snapA = HISTORY_SNAPSHOTS.find((s) => s.id === selected[0]);
-  const snapB = HISTORY_SNAPSHOTS.find((s) => s.id === selected[1]);
+  const snapA = historyData.find((s) => s.id === selected[0]);
+  const snapB = historyData.find((s) => s.id === selected[1]);
 
   if (!hasHistory) {
     return (
@@ -1521,7 +1521,7 @@ function HistoryScreen({ hasHistory }: { hasHistory: boolean }) {
         <div className="mb-8">
           <div className="overflow-x-auto pb-2">
             <div className="flex items-start gap-0 min-w-max">
-              {HISTORY_SNAPSHOTS.map((snap, i) => (
+              {historyData.map((snap, i) => (
                 <div key={snap.id} className="flex items-center">
                   {/* Spring lift on each timeline node signals interactivity */}
                   <motion.button
@@ -1551,7 +1551,7 @@ function HistoryScreen({ hasHistory }: { hasHistory: boolean }) {
                     </div>
                   </motion.button>
 
-                  {i < HISTORY_SNAPSHOTS.length - 1 && (
+                  {i < historyData.length - 1 && (
                     <div
                       className="w-16 h-px mx-1 self-start mt-6"
                       style={{ backgroundColor: C.gray200 }}
@@ -2153,6 +2153,7 @@ export default function App() {
   const [hasHistory, setHasHistory] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
+  const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
 
   const nav = (s: Screen) => setScreen(s);
 
@@ -2218,7 +2219,7 @@ export default function App() {
             />
           )}
           {screen === "history" && (
-            <HistoryScreen hasHistory={hasHistory} />
+            <HistoryScreen hasHistory={hasHistory} historyData={historyData} />
           )}
           {screen === "explore" && (
             <ExplorePathScreen
