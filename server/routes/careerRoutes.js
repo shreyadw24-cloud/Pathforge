@@ -8,5 +8,3 @@ const { updateProfile } = require('../controllers/careerController');
 router.post('/profile', auth, updateProfile);
 
 module.exports = router;
-
-

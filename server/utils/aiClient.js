@@ -1,0 +1,74 @@
+const { GoogleGenAI } = require("@google/genai");
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+async function generateCareerAdvice(profile) {
+const prompt = `
+You are an expert AI Career Advisor.
+
+Student Profile:
+
+Skills:
+${profile.skills.join(", ")}
+
+Interests:
+${profile.interests.join(", ")}
+
+Academic Background:
+${profile.background}
+
+Suggest EXACTLY 3 suitable career paths.
+
+For every career provide:
+
+1. path
+2. reasoning
+3. suggestedSkillsToLearn
+
+Return ONLY valid JSON.
+
+Use this format:
+
+{
+  "suggestions":[
+    {
+      "path":"",
+      "reasoning":"",
+      "suggestedSkillsToLearn":[]
+    }
+  ]
+}
+
+Do not write markdown.
+
+Do not write explanations.
+
+Return only JSON.
+`;
+
+const response = await ai.models.generateContent({
+  model: "gemini-flash-latest",
+  contents: prompt,
+});
+
+let text = response.text;
+
+if (typeof text === "function") {
+    text = text();
+}
+
+text = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+
+const suggestions = JSON.parse(text);
+
+return suggestions.suggestions;
+}
+
+module.exports = {
+    generateCareerAdvice,
+};

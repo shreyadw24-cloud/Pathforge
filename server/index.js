@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
+dotenv.config();
+
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
@@ -9,7 +11,7 @@ const careerRoutes = require("./routes/careerRoutes");
 const careerSuggestionRoutes = require("./routes/careerSuggestionRoutes");
 
 
-dotenv.config();
+//dotenv.config();
 
 // Connect Database
 connectDB();

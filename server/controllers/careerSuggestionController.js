@@ -1,13 +1,73 @@
 const User = require("../models/User");
 const CareerSuggestion = require("../models/CareerSuggestion");
+const { generateCareerAdvice } = require("../utils/aiClient");
 
 exports.generateSuggestion = async (req, res) => {
+    console.log("🔥 generateSuggestion route hit");
+  try {
+    // Get logged-in user
+    const user = await User.findById(req.userId);
 
-    // 1. Get logged in user
-    // 2. Read skills, interests, background
-    // 3. Send to Gemini API
-    // 4. Receive suggestions
-    // 5. Save in CareerSuggestion collection
-    // 6. Return response
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
 
+    // Validate profile
+    if (
+      !user.skills?.length ||
+      !user.interests?.length ||
+      !user.background
+    ) {
+      return res.status(400).json({
+        message: "Please complete your profile first.",
+      });
+    }
+
+    // Generate AI suggestions
+    const suggestions = await generateCareerAdvice({
+      skills: user.skills,
+      interests: user.interests,
+      background: user.background,
+    });
+
+    // Save suggestions in MongoDB
+    const careerSuggestion = await CareerSuggestion.create({
+      userId: user._id,
+      suggestions,
+    });
+
+    // Return response
+    res.status(200).json({
+      message: "Career suggestions generated successfully.",
+      suggestions: careerSuggestion.suggestions,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
+exports.getHistory = async (req, res) => {
+  try {
+    const history = await CareerSuggestion.find({
+      userId: req.userId,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      history,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message,
+    });
+  }
 };

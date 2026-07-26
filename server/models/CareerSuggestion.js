@@ -30,3 +30,4 @@ const careerSuggestionSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('CareerSuggestion', careerSuggestionSchema);
+
