@@ -26,6 +26,9 @@ For every career provide:
 1. path
 2. reasoning
 3. suggestedSkillsToLearn
+4. fitScore (an integer from 0 to 100 based on how well the profile matches)
+5. salaryRange (a short salary range string, e.g. "$80K–$120K")
+6. growthOutlook (a short description such as "High Growth", "+18% YoY", or "Stable")
 
 Return ONLY valid JSON.
 
@@ -36,7 +39,10 @@ Use this format:
     {
       "path":"",
       "reasoning":"",
-      "suggestedSkillsToLearn":[]
+      "suggestedSkillsToLearn":[],
+      "fitScore":0,
+      "salaryRange":"",
+      "growthOutlook":""
     }
   ]
 }

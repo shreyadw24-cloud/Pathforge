@@ -11,8 +11,20 @@ const suggestionItemSchema = new mongoose.Schema({
   },
   suggestedSkillsToLearn: [{
     type: String
-  }]
-}, {
+  }],
+  fitScore: {
+  type: Number
+},
+
+salaryRange: {
+  type: String
+},
+
+growthOutlook: {
+  type: String
+}
+}, 
+ {
   _id: false
 });
 
