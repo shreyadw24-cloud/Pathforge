@@ -9,7 +9,7 @@ import {
   Zap, Clock, GitCompare, ChevronLeft, BookOpen, ExternalLink,
   Building2, MapPin,
 } from "lucide-react";
-import { apiPost } from "../api";
+import { apiPost, apiGet } from "../api";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Screen = "login" | "profile" | "loading" | "results" | "history" | "explore" | "learning-plan";
@@ -2161,11 +2161,22 @@ export default function App() {
 
   const handleLoadingDone = useCallback(async () => {
     try {
-      const result = await apiPost("/career/advise", {}, localStorage.getItem("token") || undefined);
-      setCareerData(result.suggestions);
+      const result = await apiGet("/suggestions/generate", localStorage.getItem("token") || undefined);
+      const mapped = result.suggestions.map((s: any, i: number) => ({
+        id: i + 1,
+        title: s.path,
+        subtitle: "AI Suggested Path",
+        fit: [92, 82, 72][i] ?? 70,
+        reasoning: s.reasoning,
+        learn: s.suggestedSkillsToLearn,
+        salary: "Varies by role",
+        growth: "Data pending",
+        best: i === 0,
+      }));
+      setCareerData(mapped);
     } catch (err) {
       console.warn("AI advise failed, showing demo data:", err);
-      setCareerData(CAREER_RESULTS); // fallback so app never breaks in demo
+      setCareerData(CAREER_RESULTS);
     }
     setScreen("results");
   }, []);
