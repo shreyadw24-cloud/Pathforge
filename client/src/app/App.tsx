@@ -438,6 +438,8 @@ function ChipInput({
 
 function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void }) {
   const [dropdown, setDropdown] = useState(false);
+  const userName = localStorage.getItem("userName") || "User";
+  const initials = userName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   // "results" is the active tab for explore and learning-plan sub-screens
   const activeTab = (screen === "explore" || screen === "learning-plan") ? "results" : screen;
@@ -490,9 +492,9 @@ function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void 
             className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
             style={{ backgroundColor: C.indigo }}
           >
-            AK
+            {initials}
           </div>
-          <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.65)" }}>Aryan K.</span>
+          <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.65)" }}>{userName}</span>
           <ChevronDown size={13} color="rgba(255,255,255,0.4)" />
         </button>
 
@@ -526,7 +528,7 @@ function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void 
               <button
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-red-50 transition-colors text-left"
                 style={{ color: "#DC2626" }}
-                onClick={() => { localStorage.removeItem("token"); setDropdown(false); onNav("login"); }}
+                onClick={() => { localStorage.removeItem("token"); localStorage.removeItem("userName"); setDropdown(false); onNav("login"); }}
               >
                 <LogOut size={14} />
                 Sign out
@@ -563,6 +565,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
         ? await apiPost("/auth/register", { name, email, password })
         : await apiPost("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.user?.name || "User");
       onLogin();
     } catch (err: any) {
       setError(err.message);
