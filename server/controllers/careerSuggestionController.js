@@ -34,9 +34,13 @@ exports.generateSuggestion = async (req, res) => {
 
     // Save suggestions in MongoDB
     const careerSuggestion = await CareerSuggestion.create({
-      userId: user._id,
-      suggestions,
-    });
+  userId: user._id,
+  suggestions,
+
+  skills: [...user.skills],
+  interests: [...user.interests],
+  background: user.background,
+});
 
     // Return response
     res.status(200).json({

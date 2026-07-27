@@ -26,7 +26,21 @@ const careerSuggestionSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  skills: {
+    type: [String],
+    default: [],
+},
+
+interests: {
+    type: [String],
+    default: [],
+},
+
+background: {
+    type: String,
+    default: "",
+}
 });
 
 module.exports = mongoose.model('CareerSuggestion', careerSuggestionSchema);
