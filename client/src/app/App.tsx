@@ -2157,7 +2157,28 @@ export default function App() {
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
   const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
 
-  const nav = (s: Screen) => setScreen(s);
+  const nav = (s: Screen) => {
+    if (s === "history") {
+      apiGet("/suggestions/history", localStorage.getItem("token") || undefined)
+        .then((result) => {
+          const mapped = result.history.map((h: any) => ({
+            id: h._id,
+            date: new Date(h.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+            skills: [] as string[],
+            interests: [] as string[],
+            academic: "N/A",
+            topResult: h.suggestions?.[0]?.path || "N/A",
+            fitScore: 85,
+          }));
+          setHistoryData(mapped);
+          setHasHistory(mapped.length > 0);
+        })
+        .catch((err) => {
+          console.warn("History fetch failed, showing whatever is in state:", err);
+        });
+    }
+    setScreen(s);
+  };
 
   const handleLoadingDone = useCallback(async () => {
     try {
@@ -2183,7 +2204,7 @@ export default function App() {
 
   const handleSaveAndCompare = () => {
     setHasHistory(true);
-    setScreen("history");
+    nav("history");
   };
 
   const handleExplore = (id: number) => {
