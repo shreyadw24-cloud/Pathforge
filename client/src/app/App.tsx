@@ -2167,9 +2167,9 @@ export default function App() {
           const mapped = result.history.map((h: any) => ({
             id: h._id,
             date: new Date(h.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }),
-            skills: [] as string[],
-            interests: [] as string[],
-            academic: "N/A",
+            skills: h.skills || [],
+            interests: h.interests || [],
+            academic: h.background || "N/A",
             topResult: h.suggestions?.[0]?.path || "N/A",
             fitScore: 85,
           }));
@@ -2190,11 +2190,11 @@ export default function App() {
         id: i + 1,
         title: s.path,
         subtitle: "AI Suggested Path",
-        fit: [92, 82, 72][i] ?? 70,
+        fit: s.fitScore ?? [92, 82, 72][i] ?? 70,
         reasoning: s.reasoning,
         learn: s.suggestedSkillsToLearn,
-        salary: "Varies by role",
-        growth: "Data pending",
+        salary: s.salaryRange || "Varies by role",
+        growth: s.growthOutlook || "Data pending",
         best: i === 0,
       }));
       setCareerData(mapped);
