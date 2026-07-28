@@ -1468,7 +1468,7 @@ function ResultsScreen({
 
 // ── History ───────────────────────────────────────────────────────────────────
 
-function HistoryScreen({ hasHistory, historyData }: { hasHistory: boolean; historyData: typeof HISTORY_SNAPSHOTS }) {
+function HistoryScreen({ hasHistory, historyData, growthChartData }: { hasHistory: boolean; historyData: typeof HISTORY_SNAPSHOTS; growthChartData: typeof GROWTH_DATA }) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleSnap = (id: string) => {
@@ -1582,7 +1582,7 @@ function HistoryScreen({ hasHistory, historyData }: { hasHistory: boolean; histo
             </span>
           </div>
           <ResponsiveContainer width="100%" height={148}>
-            <AreaChart data={GROWTH_DATA} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
+            <AreaChart data={growthChartData} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="tealGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={C.teal} stopOpacity={0.18} />
@@ -2159,6 +2159,7 @@ export default function App() {
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
   const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
+  const [growthChartData, setGrowthChartData] = useState(GROWTH_DATA);
 
   const nav = (s: Screen) => {
     if (s === "history") {
@@ -2175,6 +2176,11 @@ export default function App() {
           }));
           setHistoryData(mapped);
           setHasHistory(mapped.length > 0);
+          const chartData = [...mapped].reverse().map((m: any) => ({
+            month: m.date.split(" ")[0].slice(0, 3),
+            score: m.fitScore,
+          }));
+          setGrowthChartData(chartData);
         })
         .catch((err) => {
           console.warn("History fetch failed, showing whatever is in state:", err);
@@ -2256,7 +2262,7 @@ export default function App() {
             />
           )}
           {screen === "history" && (
-            <HistoryScreen hasHistory={hasHistory} historyData={historyData} />
+            <HistoryScreen hasHistory={hasHistory} historyData={historyData} growthChartData={growthChartData} />
           )}
           {screen === "explore" && (
             <ExplorePathScreen
