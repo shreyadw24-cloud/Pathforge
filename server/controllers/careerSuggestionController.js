@@ -30,6 +30,7 @@ exports.generateSuggestion = async (req, res) => {
       skills: user.skills,
       interests: user.interests,
       background: user.background,
+      currentRole: user.currentRole,
     });
 
     // Save suggestions in MongoDB
