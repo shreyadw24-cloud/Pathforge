@@ -1573,13 +1573,16 @@ function HistoryScreen({ hasHistory, historyData, growthChartData }: { hasHistor
               <h3 className="text-base font-black" style={{ color: C.charcoal }}>Career fit score over time</h3>
               <p className="text-sm" style={{ color: C.gray500 }}>Best match score, tracked monthly</p>
             </div>
-            <span
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
-              style={{ backgroundColor: C.tealLight, color: "#0F766E" }}
-            >
-              <TrendingUp size={12} />
-              +23 pts since March
-            </span>
+            {growthChartData.length > 1 && (
+              <span
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
+                style={{ backgroundColor: C.tealLight, color: "#0F766E" }}
+              >
+                <TrendingUp size={12} />
+                {growthChartData[growthChartData.length - 1].score - growthChartData[0].score >= 0 ? "+" : ""}
+                {growthChartData[growthChartData.length - 1].score - growthChartData[0].score} pts since {growthChartData[0].month}
+              </span>
+            )}
           </div>
           <ResponsiveContainer width="100%" height={148}>
             <AreaChart data={growthChartData} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
