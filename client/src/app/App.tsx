@@ -863,7 +863,7 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
     setSaving(true);
     setSaveError("");
     try {
-      await apiPost("/career/profile", { skills, interests, background: academic }, localStorage.getItem("token") || undefined);
+      await apiPost("/career/profile", { skills, interests, background: academic, currentRole: role }, localStorage.getItem("token") || undefined);
       onSubmit();
     } catch (err: any) {
       setSaveError(err.message);
