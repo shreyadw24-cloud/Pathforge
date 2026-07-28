@@ -2170,7 +2170,7 @@ export default function App() {
         .then((result) => {
           const mapped = result.history.map((h: any) => ({
             id: h._id,
-            date: new Date(h.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+            date: new Date(h.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }),
             skills: h.skills || [],
             interests: h.interests || [],
             academic: h.background || "N/A",
@@ -2179,9 +2179,9 @@ export default function App() {
           }));
           setHistoryData(mapped);
           setHasHistory(mapped.length > 0);
-          const chartData = [...mapped].reverse().map((m: any) => ({
-            month: m.date.split(" ")[0].slice(0, 3),
-            score: m.fitScore,
+          const chartData = [...result.history].reverse().map((h: any) => ({
+            month: new Date(h.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short" }),
+            score: h.suggestions?.[0]?.fitScore ?? 85,
           }));
           setGrowthChartData(chartData);
         })
