@@ -1334,16 +1334,49 @@ function LoadingScreen({ onDone }: { onDone: () => void }) {
 
 function ResultsScreen({
   careerData,
+  hasResults,
   onSaveAndCompare,
   onExplore,
   onLearnPlan,
+  onGoToProfile,
 }: {
   careerData: typeof CAREER_RESULTS;
+  hasResults: boolean;
   onSaveAndCompare: () => void;
   onExplore: (id: number) => void;
   onLearnPlan: (id: number) => void;
+  onGoToProfile: () => void;
 }) {
   const [saved, setSaved] = useState(false);
+
+  if (!hasResults) {
+    return (
+      <div
+        className="min-h-[calc(100vh-56px)] flex items-center justify-center px-6"
+        style={{ backgroundColor: C.offWhite }}
+      >
+        <div className="text-center max-w-xs">
+          <div
+            className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            style={{ backgroundColor: C.indigoLight }}
+          >
+            <TrendingUp size={28} style={{ color: C.indigo }} />
+          </div>
+          <h2 className="text-xl font-black mb-2" style={{ color: C.charcoal }}>No results yet</h2>
+          <p className="text-sm leading-relaxed mb-4" style={{ color: C.gray500 }}>
+            Complete your profile to get your AI-generated career paths.
+          </p>
+          <button
+            onClick={onGoToProfile}
+            className="text-sm font-semibold px-4 py-2 rounded-xl text-white"
+            style={{ backgroundColor: C.indigo }}
+          >
+            Build your profile
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleSave = () => {
     setSaved(true);
@@ -2172,6 +2205,7 @@ export default function App() {
     localStorage.getItem("token") ? "profile" : "login"
   );
   const [hasHistory, setHasHistory] = useState(false);
+  const [hasResults, setHasResults] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
   const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
@@ -2224,9 +2258,11 @@ export default function App() {
         best: i === 0,
       }));
       setCareerData(mapped);
+      setHasResults(true);
     } catch (err) {
       console.warn("AI advise failed, showing demo data:", err);
       setCareerData(CAREER_RESULTS);
+      setHasResults(true);
     }
     setScreen("results");
   }, []);
@@ -2276,9 +2312,11 @@ export default function App() {
           {screen === "results" && (
             <ResultsScreen
               careerData={careerData}
+              hasResults={hasResults}
               onSaveAndCompare={handleSaveAndCompare}
               onExplore={handleExplore}
               onLearnPlan={handleLearnPlan}
+              onGoToProfile={() => nav("profile")}
             />
           )}
           {screen === "history" && (
