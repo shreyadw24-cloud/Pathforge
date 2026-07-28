@@ -2171,7 +2171,7 @@ export default function App() {
             interests: h.interests || [],
             academic: h.background || "N/A",
             topResult: h.suggestions?.[0]?.path || "N/A",
-            fitScore: 85,
+            fitScore: h.suggestions?.[0]?.fitScore ?? 85,
           }));
           setHistoryData(mapped);
           setHasHistory(mapped.length > 0);
