@@ -7,7 +7,7 @@ import {
   TrendingUp, ArrowRight, X, Plus, Search, User, LogOut,
   Settings, Bell, ChevronDown, Check, Star, GraduationCap,
   Zap, Clock, GitCompare, ChevronLeft, BookOpen, ExternalLink,
-  Building2, MapPin,
+  Building2, MapPin, Eye, EyeOff,
 } from "lucide-react";
 import { apiPost, apiGet } from "../api";
 
@@ -551,6 +551,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [isSignup, setIsSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -575,10 +576,10 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   };
 
   const formItems = [
-    ...(isSignup ? [{ label: "Name", type: "text", value: name, set: setName, placeholder: "Aryan Sharma" }] : []),
-    { label: "Email", type: "email", value: email, set: setEmail, placeholder: "aryan@example.com" },
-    { label: "Password", type: "password", value: password, set: setPassword, placeholder: "••••••••" },
-    ...(isSignup ? [{ label: "Confirm Password", type: "password", value: confirmPassword, set: setConfirmPassword, placeholder: "••••••••" }] : []),
+    ...(isSignup ? [{ label: "Name", type: "text", value: name, set: setName, placeholder: "Your full name" }] : []),
+    { label: "Email", type: "email", value: email, set: setEmail, placeholder: "you@example.com" },
+    { label: "Password", type: showPassword ? "text" : "password", value: password, set: setPassword, placeholder: "••••••••" },
+    ...(isSignup ? [{ label: "Confirm Password", type: showPassword ? "text" : "password", value: confirmPassword, set: setConfirmPassword, placeholder: "••••••••" }] : []),
   ];
 
   return (
@@ -729,19 +730,31 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                 transition={{ delay: 0.1 + i * 0.06, duration: 0.35 }}
               >
                 <label className="block text-sm font-semibold mb-1.5" style={{ color: C.charcoal }}>{label}</label>
-                <input
-                  type={type}
-                  value={val}
-                  onChange={(e) => set(e.target.value)}
-                  placeholder={placeholder}
-                  required
-                  className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
-                  style={{
-                    border: `1px solid ${C.gray200}`,
-                    backgroundColor: C.white,
-                    color: C.charcoal,
-                  }}
-                />
+                <div className="relative">
+                  <input
+                    type={type}
+                    value={val}
+                    onChange={(e) => set(e.target.value)}
+                    placeholder={placeholder}
+                    required
+                    className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
+                    style={{
+                      border: `1px solid ${C.gray200}`,
+                      backgroundColor: C.white,
+                      color: C.charcoal,
+                    }}
+                  />
+                  {label.toLowerCase().includes("password") && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2"
+                      style={{ color: C.gray400 }}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  )}
+                </div>
               </motion.div>
             ))}
             
@@ -928,8 +941,8 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { label: "Full name", value: name, set: setName, placeholder: "Aryan Kumar" },
-                  { label: "Current role", value: role, set: setRole, placeholder: "Software Engineer" },
+                  { label: "Full name", value: name, set: setName, placeholder: "Enter your full name" },
+                  { label: "Current role", value: role, set: setRole, placeholder: "e.g. Student, Analyst, Designer" },
                 ].map(({ label, value: val, set, placeholder }) => (
                   <div key={label}>
                     <label className="block text-sm font-semibold mb-1.5" style={{ color: C.charcoal }}>{label}</label>
