@@ -829,7 +829,7 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
   const [academic, setAcademic] = useState("");
   const [academicSearch, setAcademicSearch] = useState("");
   const [academicOpen, setAcademicOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(localStorage.getItem("userName") || "");
   const [role, setRole] = useState("");
 
   const strength = Math.min(
@@ -2163,6 +2163,10 @@ export default function App() {
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
   const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
   const [growthChartData, setGrowthChartData] = useState(GROWTH_DATA);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screen]);
 
   const nav = (s: Screen) => {
     if (s === "history") {
