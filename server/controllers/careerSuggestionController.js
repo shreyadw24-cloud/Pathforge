@@ -40,6 +40,7 @@ exports.generateSuggestion = async (req, res) => {
   skills: [...user.skills],
   interests: [...user.interests],
   background: user.background,
+  currentRole: user.currentRole,
 });
 
     // Return response

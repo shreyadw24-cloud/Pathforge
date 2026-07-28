@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema({
   }],
   background: {
     type: String
-  }
+  },
+  currentRole: {
+  type: String
+}
 }, {
   timestamps: true
 });

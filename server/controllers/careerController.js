@@ -2,7 +2,7 @@ const User = require('../models/User');
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { skills, interests, background } = req.body;
+    const { skills, interests, background, currentRole} = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.userId,
@@ -10,6 +10,7 @@ exports.updateProfile = async (req, res) => {
         skills,
         interests,
         background,
+        currentRole,
       },
       { new: true }
     );

@@ -19,6 +19,9 @@ ${profile.interests.join(", ")}
 Academic Background:
 ${profile.background}
 
+Current Role:
+${profile.currentRole}
+
 Suggest EXACTLY 3 suitable career paths.
 
 For every career provide:

@@ -52,6 +52,11 @@ interests: {
 background: {
     type: String,
     default: "",
+},
+
+currentRole: {
+    type: String,
+    default: "",
 }
 });
 
