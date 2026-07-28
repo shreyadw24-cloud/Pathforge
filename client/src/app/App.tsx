@@ -510,15 +510,15 @@ function Navbar({ screen, onNav }: { screen: Screen; onNav: (s: Screen) => void 
               style={{ backgroundColor: C.white, borderColor: C.gray200 }}
             >
               {[
-                { icon: User, label: "Your profile" },
-                { icon: Settings, label: "Settings" },
-                { icon: Bell, label: "Notifications" },
-              ].map(({ icon: Icon, label }) => (
+                { icon: User, label: "Your profile", action: () => onNav("profile") },
+                { icon: Settings, label: "Settings", action: () => alert("Settings coming soon") },
+                { icon: Bell, label: "Notifications", action: () => alert("Notifications coming soon") },
+              ].map(({ icon: Icon, label, action }) => (
                 <button
                   key={label}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-left"
                   style={{ color: C.gray700 }}
-                  onClick={() => setDropdown(false)}
+                  onClick={() => { setDropdown(false); action(); }}
                 >
                   <Icon size={14} />
                   {label}
