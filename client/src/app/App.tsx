@@ -866,7 +866,7 @@ function ProfileBuilderScreen({ onSubmit }: { onSubmit: () => void }) {
       await apiPost("/career/profile", { skills, interests, background: academic, currentRole: role }, localStorage.getItem("token") || undefined);
       onSubmit();
     } catch (err: any) {
-      setSaveError(err.message);
+      setSaveError("Couldn't save your profile right now — check your connection and try again.");
     } finally {
       setSaving(false);
     }
@@ -1335,6 +1335,7 @@ function LoadingScreen({ onDone }: { onDone: () => void }) {
 function ResultsScreen({
   careerData,
   hasResults,
+  apiError,
   onSaveAndCompare,
   onExplore,
   onLearnPlan,
@@ -1342,6 +1343,7 @@ function ResultsScreen({
 }: {
   careerData: typeof CAREER_RESULTS;
   hasResults: boolean;
+  apiError: string;
   onSaveAndCompare: () => void;
   onExplore: (id: number) => void;
   onLearnPlan: (id: number) => void;
@@ -1358,20 +1360,22 @@ function ResultsScreen({
         <div className="text-center max-w-xs">
           <div
             className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-            style={{ backgroundColor: C.indigoLight }}
+            style={{ backgroundColor: apiError ? C.amberLight : C.indigoLight }}
           >
-            <TrendingUp size={28} style={{ color: C.indigo }} />
+            <TrendingUp size={28} style={{ color: apiError ? "#92400E" : C.indigo }} />
           </div>
-          <h2 className="text-xl font-black mb-2" style={{ color: C.charcoal }}>No results yet</h2>
+          <h2 className="text-xl font-black mb-2" style={{ color: C.charcoal }}>
+            {apiError ? "Something went wrong" : "No results yet"}
+          </h2>
           <p className="text-sm leading-relaxed mb-4" style={{ color: C.gray500 }}>
-            Complete your profile to get your AI-generated career paths.
+            {apiError || "Complete your profile to get your AI-generated career paths."}
           </p>
           <button
             onClick={onGoToProfile}
             className="text-sm font-semibold px-4 py-2 rounded-xl text-white"
             style={{ backgroundColor: C.indigo }}
           >
-            Build your profile
+            {apiError ? "Go back and try again" : "Build your profile"}
           </button>
         </div>
       </div>
@@ -2206,6 +2210,7 @@ export default function App() {
   );
   const [hasHistory, setHasHistory] = useState(false);
   const [hasResults, setHasResults] = useState(false);
+  const [apiError, setApiError] = useState("");
   const [selectedCareer, setSelectedCareer] = useState<number>(1);
   const [careerData, setCareerData] = useState(CAREER_RESULTS);
   const [historyData, setHistoryData] = useState(HISTORY_SNAPSHOTS);
@@ -2238,6 +2243,7 @@ export default function App() {
         })
         .catch((err) => {
           console.warn("History fetch failed, showing whatever is in state:", err);
+          setApiError("Couldn't load your latest history — showing last known data.");
         });
     }
     setScreen(s);
@@ -2259,10 +2265,11 @@ export default function App() {
       }));
       setCareerData(mapped);
       setHasResults(true);
-    } catch (err) {
-      console.warn("AI advise failed, showing demo data:", err);
-      setCareerData(CAREER_RESULTS);
-      setHasResults(true);
+      setApiError("");
+    } catch (err: any) {
+      console.warn("AI advise failed:", err);
+      setHasResults(false);
+      setApiError("Couldn't reach the AI service. Please try again.");
     }
     setScreen("results");
   }, []);
@@ -2313,6 +2320,7 @@ export default function App() {
             <ResultsScreen
               careerData={careerData}
               hasResults={hasResults}
+              apiError={apiError}
               onSaveAndCompare={handleSaveAndCompare}
               onExplore={handleExplore}
               onLearnPlan={handleLearnPlan}
