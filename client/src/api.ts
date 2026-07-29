@@ -5,7 +5,7 @@ export async function apiPost(path: string, body: unknown, token?: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: token } : {}), // NOTE: no "Bearer " prefix — her middleware expects raw token
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -18,7 +18,7 @@ export async function apiGet(path: string, token?: string) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "GET",
     headers: {
-      ...(token ? { Authorization: token } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
   const data = await res.json();
