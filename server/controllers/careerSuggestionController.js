@@ -3,7 +3,6 @@ const CareerSuggestion = require("../models/CareerSuggestion");
 const { generateCareerAdvice } = require("../utils/aiClient");
 
 exports.generateSuggestion = async (req, res) => {
-    console.log("🔥 generateSuggestion route hit");
   try {
     // Get logged-in user
     const user = await User.findById(req.userId);
@@ -26,12 +25,18 @@ exports.generateSuggestion = async (req, res) => {
     }
 
     // Generate AI suggestions
-    const suggestions = await generateCareerAdvice({
-      skills: user.skills,
-      interests: user.interests,
-      background: user.background,
-      currentRole: user.currentRole,
-    });
+    let suggestions;
+    try {
+      suggestions = await generateCareerAdvice({
+        skills: user.skills,
+        interests: user.interests,
+        background: user.background,
+        currentRole: user.currentRole,
+      });
+    } catch (aiErr) {
+      console.error("AI service error:", aiErr);
+      return res.status(502).json({ message: "AI service is currently unavailable. Please try again." });
+    }
 
     // Save suggestions in MongoDB
     const careerSuggestion = await CareerSuggestion.create({

@@ -1,6 +1,9 @@
+const rateLimit = require("express-rate-limit");
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const helmet = require("helmet");
 
 dotenv.config();
 
@@ -19,11 +22,12 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
+app.use(helmet());
 app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/career", careerRoutes);
 app.use("/api/suggestions", careerSuggestionRoutes);
 

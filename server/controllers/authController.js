@@ -6,8 +6,12 @@ const jwt = require("jsonwebtoken");
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    const existingUser = await User.findOne({ email });
+    if (typeof email !== "string" || typeof password !== "string" || typeof name !== "string") {
+      return res.status(400).json({ message: "Invalid input format" });
+    }
+    
+    const normalizedEmail = email.toLowerCase().trim();
+    const existingUser = await User.findOne({ email: normalizedEmail });
 
     if (existingUser) {
       return res.status(400).json({
@@ -19,7 +23,7 @@ exports.registerUser = async (req, res) => {
 
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
     });
 
@@ -47,8 +51,12 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({ message: "Invalid input format" });
+    }
+    
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
       return res.status(404).json({
