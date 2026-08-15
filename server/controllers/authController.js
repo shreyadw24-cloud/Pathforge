@@ -9,6 +9,9 @@ exports.registerUser = async (req, res) => {
     if (typeof email !== "string" || typeof password !== "string" || typeof name !== "string") {
       return res.status(400).json({ message: "Invalid input format" });
     }
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
     
     const normalizedEmail = email.toLowerCase().trim();
     const existingUser = await User.findOne({ email: normalizedEmail });

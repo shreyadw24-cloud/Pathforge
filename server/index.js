@@ -1,5 +1,5 @@
 const rateLimit = require("express-rate-limit");
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 });
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
