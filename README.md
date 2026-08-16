@@ -1,4 +1,4 @@
-# CareerAdvisor
+# Pathforge
 Backend Authentication: Shreya Dwivedi
 AI Integration: Sakshi Sanghavi
 Frontend Integration: Priyanshi Jain 
