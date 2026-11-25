@@ -5,22 +5,32 @@ const ai = new GoogleGenAI({
 });
 
 // Pehla model fail ho toh dusra try hoga
-const MODELS = ["gemini-flash-latest", "gemini-2.5-flash-lite"];
+const MODELS = ["gemini-flash-latest", "gemini-3.5-flash-lite"];
 
 async function callWithRetry(makeCall) {
+  let lastErr;
+
   for (const model of MODELS) {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         return await makeCall(model);
       } catch (err) {
+        lastErr = err;
+
+        // Model hi available nahi hai -> seedha agle model pe jao
+        if (err.status === 404) break;
+
+        // Busy / rate limit -> thoda ruk ke dobara try
         const retryable = err.status === 503 || err.status === 429;
         if (!retryable) throw err;
+
         await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt));
       }
     }
   }
+
   const e = new Error("AI busy");
-  e.status = 503;
+  e.status = lastErr?.status === 404 ? 502 : 503;
   throw e;
 }
 
