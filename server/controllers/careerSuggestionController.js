@@ -35,26 +35,34 @@ exports.generateSuggestion = async (req, res) => {
       });
     } catch (aiErr) {
       console.error("AI service error:", aiErr);
-      return res.status(502).json({ message: "AI service is currently unavailable. Please try again." });
+
+      if (aiErr.status === 503 || aiErr.status === 429) {
+        return res.status(503).json({
+          message: "AI abhi busy hai, thodi der baad try karo.",
+        });
+      }
+
+      return res.status(502).json({
+        message: "AI service is currently unavailable. Please try again.",
+      });
     }
 
     // Save suggestions in MongoDB
     const careerSuggestion = await CareerSuggestion.create({
-  userId: user._id,
-  suggestions,
+      userId: user._id,
+      suggestions,
 
-  skills: [...user.skills],
-  interests: [...user.interests],
-  background: user.background,
-  currentRole: user.currentRole,
-});
+      skills: [...user.skills],
+      interests: [...user.interests],
+      background: user.background,
+      currentRole: user.currentRole,
+    });
 
     // Return response
     res.status(200).json({
       message: "Career suggestions generated successfully.",
       suggestions: careerSuggestion.suggestions,
     });
-
   } catch (err) {
     console.error(err);
 
@@ -73,7 +81,6 @@ exports.getHistory = async (req, res) => {
     res.status(200).json({
       history,
     });
-
   } catch (err) {
     console.error(err);
 

@@ -1,5 +1,4 @@
 const rateLimit = require("express-rate-limit");
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 });
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -13,13 +12,15 @@ const authRoutes = require("./routes/authRoutes");
 const careerRoutes = require("./routes/careerRoutes");
 const careerSuggestionRoutes = require("./routes/careerSuggestionRoutes");
 
-
-//dotenv.config();
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 });
 
 // Connect Database
 connectDB();
 
 const app = express();
+
+// Render proxy ke peeche chalta hai
+app.set("trust proxy", 1);
 
 // Middleware
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));

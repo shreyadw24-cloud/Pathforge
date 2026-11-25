@@ -4,8 +4,28 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+// Pehla model fail ho toh dusra try hoga
+const MODELS = ["gemini-flash-latest", "gemini-2.5-flash-lite"];
+
+async function callWithRetry(makeCall) {
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await makeCall(model);
+      } catch (err) {
+        const retryable = err.status === 503 || err.status === 429;
+        if (!retryable) throw err;
+        await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt));
+      }
+    }
+  }
+  const e = new Error("AI busy");
+  e.status = 503;
+  throw e;
+}
+
 async function generateCareerAdvice(profile) {
-const prompt = `
+  const prompt = `
 You are an expert AI Career Advisor.
 
 Student Profile:
@@ -57,27 +77,30 @@ Do not write explanations.
 Return only JSON.
 `;
 
-const response = await ai.models.generateContent({
-  model: "gemini-flash-latest",
-  contents: prompt,
-});
+  const response = await callWithRetry((model) =>
+    ai.models.generateContent({
+      model,
+      contents: prompt,
+      config: { responseMimeType: "application/json" },
+    })
+  );
 
-let text = response.text;
+  let text = response.text;
 
-if (typeof text === "function") {
+  if (typeof text === "function") {
     text = text();
-}
+  }
 
-text = text
+  text = text
     .replace(/```json/g, "")
     .replace(/```/g, "")
     .trim();
 
-const suggestions = JSON.parse(text);
+  const suggestions = JSON.parse(text);
 
-return suggestions.suggestions;
+  return suggestions.suggestions;
 }
 
 module.exports = {
-    generateCareerAdvice,
+  generateCareerAdvice,
 };
